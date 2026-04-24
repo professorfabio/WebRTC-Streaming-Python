@@ -4,6 +4,7 @@ import requests
 from aiortc import RTCPeerConnection, RTCSessionDescription
 from audio_track import MicrophoneAudioTrack
 from audio_output import play_audio
+from const import *
 
 pc = RTCPeerConnection()
 
@@ -27,7 +28,7 @@ async def run():
     print("Waiting for offer...")
 
     while True:
-        r = requests.get("http://localhost:8080/offer")
+        r = requests.get("http://"+SIGNALING_SERVER+":8080/offer")
         if r.text:
             break
         await asyncio.sleep(1)
@@ -39,7 +40,7 @@ async def run():
     answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
 
-    requests.post("http://localhost:8080/answer", data=answer.sdp)
+    requests.post("http://"+SIGNALING_SERVER+":8080/answer", data=answer.sdp)
 
     print("Connected!")
 
