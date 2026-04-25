@@ -35,6 +35,10 @@ def on_icecandidate(candidate):
         import requests
         requests.post("http://"+SIGNALING_SERVER+":8080/candidate/a", data=candidate.to_sdp())
 
+@pc.on("connectionstatechange")
+async def on_state_change():
+    print("Connection state:", pc.connectionState)
+
 async def receive_candidates():
     import requests
     seen = set()
