@@ -54,6 +54,7 @@ async def receive_candidates():
         await asyncio.sleep(1)
 
 async def run():
+    print("Senders:", pc.getSenders())
     offer = await pc.createOffer()
     await pc.setLocalDescription(offer)
 
