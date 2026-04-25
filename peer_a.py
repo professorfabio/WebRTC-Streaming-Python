@@ -81,6 +81,9 @@ async def run():
     asyncio.create_task(receive_candidates())
     offer = await pc.createOffer()
     await pc.setLocalDescription(offer)
+    # WAIT for ICE gathering to finish
+    while pc.iceGatheringState != "complete":
+        await asyncio.sleep(0.1)
 
     # WAIT for ICE gathering
     while pc.iceGatheringState != "complete":
