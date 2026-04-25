@@ -87,6 +87,10 @@ async def run():
     answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
 
+    # WAIT for ICE gathering
+    while pc.iceGatheringState != "complete":
+        await asyncio.sleep(0.1)
+
     requests.post("http://"+SIGNALING_SERVER+":8080/answer", data=answer.sdp)
 
     print("Connected!")
