@@ -6,6 +6,12 @@ from audio_track import MicrophoneAudioTrack
 from audio_output import play_audio
 from const import *
 
+try:
+    loop = asyncio.get_event_loop()
+except RuntimeError:
+    loop = asyncio.new_vent_loop()
+    asyncio.set_event_loop(loop)
+
 pc = RTCPeerConnection()
 
 # Send mic audio
