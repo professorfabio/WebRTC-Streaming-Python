@@ -29,6 +29,11 @@ def on_track(track):
 
         asyncio.create_task(recv_audio())
 
+@pc.on("icecandidate")
+def on_icecandidate(candidate):
+    if candidate:
+        import requests
+        requests.post("http://localhost:8080/candidate/b", data=candidate.to_sdp())
 
 async def run():
     print("Waiting for offer...")
