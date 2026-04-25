@@ -34,26 +34,40 @@ def on_track(track):
 @pc.on("icecandidate")
 def on_icecandidate(candidate):
     if candidate:
-        import requests
-        requests.post("http://"+SIGNALING_SERVER+":8080/candidate/b", data=candidate.to_sdp())
+        requests.post(
+            "http://"+SIGNALING_SERVER+":8080/candidate/b",
+            json={
+                "candidate": candidate.candidate,
+                "sdpMid": candidate.sdpMid,
+                "sdpMLineIndex": candidate.sdpMLineIndex,
+            },
+        )
 
 @pc.on("connectionstatechange")
 async def on_state_change():
     print("Connection state:", pc.connectionState)
 
 async def receive_candidates():
-    import requests
+    from aiortc import RTCIceCandidate
+
     seen = set()
 
     while True:
         r = requests.get("http://"+SIGNALING_SERVER+":8080/candidate/a")
         for c in r.json():
-            if c not in seen:
-                seen.add(c)
-                from aiortc import RTCIceCandidate
-                candidate = RTCIceCandidate.sdpParse(c)
+            key = str(c)
+            if key not in seen:
+                seen.add(key)
+
+                candidate = RTCIceCandidate(
+                    candidate=c["candidate"],
+                    sdpMid=c["sdpMid"],
+                    sdpMLineIndex=c["sdpMLineIndex"],
+                )
+
                 await pc.addIceCandidate(candidate)
-        await asyncio.sleep(1)
+
+        await asyncio.sleep(0.5)
 
 async def run():
     print("Waiting for offer...")
