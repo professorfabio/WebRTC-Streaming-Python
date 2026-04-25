@@ -66,6 +66,7 @@ async def run():
         RTCSessionDescription(sdp=r.text, type="offer")
     )
 
+    print("Senders:", pc.getSenders())
     answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
 
