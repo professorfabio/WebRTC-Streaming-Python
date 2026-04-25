@@ -110,7 +110,7 @@ async def run():
         #r = requests.get("http://"+SIGNALING_SERVER+":8080/answer")
         async with aiohttp.ClientSession() as session:
             async with session.get("http://"+SIGNALING_SERVER+":8080/candidate/b") as resp:
-                rtext = await resp.text
+                rtext = await resp.text()
         if rtext:
             break
         await asyncio.sleep(1)
