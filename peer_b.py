@@ -27,7 +27,9 @@ def on_track(track):
                 frame = await track.recv()
                 play_audio(frame)
 
-        asyncio.create_task(recv_audio())
+        loop = asyncio.get_running_loop()
+        loop.create_task(recv_audio())
+        #asyncio.create_task(recv_audio())
 
 @pc.on("icecandidate")
 def on_icecandidate(candidate):
