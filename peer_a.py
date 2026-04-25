@@ -36,21 +36,21 @@ def on_track(track):
 def on_icecandidate(candidate):
     if candidate:
         print("Generated candidate:", candidate.candidate)
-        #requests.post(
-        #    "http://"+SIGNALING_SERVER+":8080/candidate/a",
-        #    json={
-        #        "candidate": candidate.candidate,
-        #        "sdpMid": candidate.sdpMid,
-        #        "sdpMLineIndex": candidate.sdpMLineIndex,
-        #    },
-        #)
-        async with aiohttp.ClientSession() as session:
-            await session.post("http://"+SIGNALING_SERVER+":8080/candidate/a", json={
-                    "candidate": candidate.candidate,
-                    "sdpMid": candidate.sdpMid,
-                    "sdpMLineIndex": candidate.sdpMLineIndex,
-                }
-            )
+        requests.post(
+            "http://"+SIGNALING_SERVER+":8080/candidate/a",
+            json={
+                "candidate": candidate.candidate,
+                "sdpMid": candidate.sdpMid,
+                "sdpMLineIndex": candidate.sdpMLineIndex,
+            },
+        )
+        #async with aiohttp.ClientSession() as session:
+        #    await session.post("http://"+SIGNALING_SERVER+":8080/candidate/a", json={
+        #            "candidate": candidate.candidate,
+        #            "sdpMid": candidate.sdpMid,
+        #            "sdpMLineIndex": candidate.sdpMLineIndex,
+        #        }
+        #    )
 
 @pc.on("connectionstatechange")
 async def on_state_change():
