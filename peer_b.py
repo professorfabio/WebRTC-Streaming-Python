@@ -55,7 +55,8 @@ async def receive_candidates():
 
 async def run():
     print("Waiting for offer...")
-
+    asyncio.create_task(receive_candidates())
+    
     while True:
         r = requests.get("http://"+SIGNALING_SERVER+":8080/offer")
         if r.text:
@@ -77,5 +78,4 @@ async def run():
     while True:
         await asyncio.sleep(1)
 
-asyncio.create_task(receive_candidates())
 asyncio.run(run())
