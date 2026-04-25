@@ -34,6 +34,7 @@ def on_track(track):
 @pc.on("icecandidate")
 def on_icecandidate(candidate):
     if candidate:
+        print("Generated candidate:", candidate.candidate)
         requests.post(
             "http://"+SIGNALING_SERVER+":8080/candidate/a",
             json={
