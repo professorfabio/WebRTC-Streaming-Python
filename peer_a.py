@@ -77,6 +77,10 @@ async def run():
     offer = await pc.createOffer()
     await pc.setLocalDescription(offer)
 
+    # WAIT for ICE gathering
+    while pc.iceGatheringState != "complete":
+        await asyncio.sleep(0.1)
+
     requests.post("http://"+SIGNALING_SERVER+":8080/offer", data=offer.sdp)
 
     print("Waiting for answer...")
