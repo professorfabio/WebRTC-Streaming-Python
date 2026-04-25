@@ -91,6 +91,9 @@ async def run():
     print("Senders:", pc.getSenders())
     answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
+    # WAIT for ICE gathering to finish
+    while pc.iceGatheringState != "complete":
+        await asyncio.sleep(0.1)
 
     # WAIT for ICE gathering
     while pc.iceGatheringState != "complete":
