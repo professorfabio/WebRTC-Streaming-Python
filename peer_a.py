@@ -47,6 +47,10 @@ def on_icecandidate(candidate):
 async def on_state_change():
     print("Connection state:", pc.connectionState)
 
+@pc.on("iceconnectionstatechange")
+async def on_ice_state():
+    print("ICE state:", pc.iceConnectionState)
+
 async def receive_candidates():
     import requests
     from aiortc import RTCIceCandidate
