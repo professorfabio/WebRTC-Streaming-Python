@@ -55,6 +55,8 @@ async def receive_candidates():
 
 async def run():
     print("Senders:", pc.getSenders())
+    
+    asyncio.create_task(receive_candidates())
     offer = await pc.createOffer()
     await pc.setLocalDescription(offer)
 
@@ -77,5 +79,4 @@ async def run():
     while True:
         await asyncio.sleep(1)
 
-asyncio.create_task(receive_candidates())
 asyncio.run(run())
