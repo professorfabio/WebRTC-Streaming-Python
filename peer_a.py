@@ -1,4 +1,5 @@
 import asyncio
+import aiohttp
 import requests
 
 from aiortc import RTCPeerConnection, RTCSessionDescription
@@ -35,14 +36,21 @@ def on_track(track):
 def on_icecandidate(candidate):
     if candidate:
         print("Generated candidate:", candidate.candidate)
-        requests.post(
-            "http://"+SIGNALING_SERVER+":8080/candidate/a",
-            json={
-                "candidate": candidate.candidate,
-                "sdpMid": candidate.sdpMid,
-                "sdpMLineIndex": candidate.sdpMLineIndex,
-            },
-        )
+        #requests.post(
+        #    "http://"+SIGNALING_SERVER+":8080/candidate/a",
+        #    json={
+        #        "candidate": candidate.candidate,
+        #        "sdpMid": candidate.sdpMid,
+        #        "sdpMLineIndex": candidate.sdpMLineIndex,
+        #    },
+        #)
+        async with aiohttp.ClientSession() as session:
+            await session.post("http://"+SIGNALING_SERVER+":8080/candidate/a", json={
+                    "candidate": candidate.candidate,
+                    "sdpMid": candidate.sdpMid,
+                    "sdpMLineIndex": candidate.sdpMLineIndex,
+                }
+            )
 
 @pc.on("connectionstatechange")
 async def on_state_change():
@@ -59,8 +67,11 @@ async def receive_candidates():
     seen = set()
 
     while True:
-        r = requests.get("http://"+SIGNALING_SERVER+":8080/candidate/b")
-        for c in r.json():
+        #r = requests.get("http://"+SIGNALING_SERVER+":8080/candidate/b")
+        async with aiohttp.ClientSession() as session:
+            async with session.get("http://"+SIGNALING_SERVER+":8080/candidate/b") as resp:
+                rjson = await resp.json()
+        for c in rjson:
             key = str(c)
             if key not in seen:
                 seen.add(key)
@@ -89,12 +100,17 @@ async def run():
     while pc.iceGatheringState != "complete":
         await asyncio.sleep(0.1)
 
-    requests.post("http://"+SIGNALING_SERVER+":8080/offer", data=offer.sdp)
+    #requests.post("http://"+SIGNALING_SERVER+":8080/offer", data=offer.sdp)
+    async with aiohttp.ClientSession() as session:
+        await session.post("http://"+SIGNALING_SERVER+":8080/offer", data=offer.sdp)
 
     print("Waiting for answer...")
 
     while True:
-        r = requests.get("http://"+SIGNALING_SERVER+":8080/answer")
+        #r = requests.get("http://"+SIGNALING_SERVER+":8080/answer")
+        async with aiohttp.ClientSession() as session:
+            async with session.get("http://"+SIGNALING_SERVER+":8080/candidate/b") as resp:
+                r = await resp
         if r.text:
             break
         await asyncio.sleep(1)
