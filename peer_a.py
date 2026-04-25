@@ -112,6 +112,7 @@ async def run():
             async with session.get("http://"+SIGNALING_SERVER+":8080/candidate/b") as resp:
                 rtext = await resp.text()
         if rtext:
+            print("---Answer text: "+rtext)
             break
         await asyncio.sleep(1)
 
